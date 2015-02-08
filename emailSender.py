@@ -17,9 +17,6 @@ notification"""
         """Initilizer  """
         self.loginUser = "dannyly19@gmail.com" #just some variables login info
         self.password = "hondaper"
-
-        self.sendTo = ["dannyly199@gmail.com", "danny19@uw.edu"] #recipeants that will be sent the message
-
         self.smtpAddress = "smtp.gmail.com:587" #the mailing host address, RELAY
  
         self.server = smtplib.SMTP(self.smtpAddress)#start the instance of the server
@@ -31,12 +28,22 @@ notification"""
         self.server.ehlo()
 
         
-    def sendMessage(self, message):
+    def sendMessage(self, sendTo, message):
         """This function will be the method to call when we need to send a message to the
-    given email and send the given message"""
+        given email and send the given message
+        The parameters sendTo can be passed as a array/list of address or a single string recipeant
+        """
 
+        
+        self.sendTo = ["dannyly199@gmail.com", "danny19@uw.edu"] #recipeants that will be sent the message
 
-        """msg = MIMEText(fp.read())
+        """
+        body = string.join( (
+            "From: %s:" % self.loginUser,
+            "To: %s" % sendTo,
+            "Subject: %s" % subject )
+            
+        msg = MIMEText(fp.read())
       
 
         # me == the sender's email address
@@ -47,13 +54,13 @@ notification"""
 
         """
 
-        self.server.sendmail(self.loginUser,self.sendTo,message)
+        self.server.sendmail(self.loginUser,sendTo,message)
         
     
 def main():
     test = EmailSender()
     print("poassed 1")
-    test.sendMessage("HEY fuck face")
+    test.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],"HEY fuck face")
 
 
 if __name__ == "__main__":

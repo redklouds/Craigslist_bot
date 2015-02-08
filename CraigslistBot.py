@@ -16,6 +16,9 @@ request = urllib.request.urlopen(url)
 
 soup = BeautifulSoup(request.read())
 
-x = soup.find_all("a href")
+x = soup.findAll("div", attr={"class=content"})
+
+
+
 print(x)
 
