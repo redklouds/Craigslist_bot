@@ -10,9 +10,10 @@ I left off at searching how to print a list of objects the pythonic way
 """
 from emailSender import EmailSender
 from bs4 import BeautifulSoup
-import urllib.request
+import urllib.request, time
 from craiglistsPostObj import CraigslistPostObj
-import time
+
+
 from craigslistStack import CraigslistStack
 
 class CraigslistBot():
