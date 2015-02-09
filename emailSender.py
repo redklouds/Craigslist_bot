@@ -13,10 +13,10 @@ from email.mime.text import MIMEText
 class EmailSender:
     """Python class designed to send an email to the given address upon
 notification"""
-    def __init__(self):
+    def __init__(self, userName = "genkiklausplayground@gmail.com",password = "PublicStaticMain"):
         """Initilizer  """
-        self.loginUser = "dannyly19@gmail.com" #just some variables login info
-        self.password = "hondaper"
+        self.loginUser = userName #just some variables login info
+        self.password = password
         self.smtpAddress = "smtp.gmail.com:587" #the mailing host address, RELAY
  
         self.server = smtplib.SMTP(self.smtpAddress)#start the instance of the server
