@@ -33,14 +33,11 @@ class CraigslistPostObj:
         if(self == None):
             return "README.md    #$#################################################################################"
         else:
-            return "\nPosting Title: " + self.getTitle() + "\nPost Price: " + self.getPrice() + "\nPosting Date: " + self.getDate() + "\nPosting ID: " + self.getID()
+            return "\nPosting Title: " + self.getTitle() + "\nPost Price: " + str(self.getPrice()) + "\nPosting Date: " + str(self.getDate()) + "\nPosting ID: " + str(self.getID())
 
 
     #def __eq__(self, other):
-        
-        #if(other == None):
-            #raise Exception("do not pass a Null object please")
-
+        #return self.getID() == other.getID()
 
         #return str(self.getTitle())==(str(other.getTitle())) and self.getID()== other.getID()
 
@@ -51,15 +48,19 @@ class CraigslistPostObj:
 
 
 def main():
+    test0 = CraigslistPostObj(124586,"hellow","0060650","World")
     test = CraigslistPostObj(124586,"hellow","0060650","World")
+    
     test1 = CraigslistPostObj(123456,"hey how","542582","wrod")
     test2 = CraigslistPostObj(123456,"hey how","0060650","World")
-    
+
     print(test)
-    print(test1)
-
-    #print(test1 ==(test2))
-
+    eq = (test == test1)
+    print(eq)
+    eq1 = (test0.__eq__(test))
+    print(eq1)
+    
+    
 
 
 

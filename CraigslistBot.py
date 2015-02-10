@@ -76,8 +76,46 @@ class CraigslistBot():
             #self.DBListing.push(listingObj)
             self.stack.append(listingObj)
 
-        print(self.stack, sep='\n')
-                    
+            
+    def run(self):
+        
+        request = urllib.request.urlopen(self.url)
+        
+        soupGetDom = BeautifulSoup(request.read())#reads from the URL and gets the document online into DOM
+
+        soup = soupGetDom('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
+
+        while(True):
+
+            
+            timeOfListing = soup[0].find("time").contents[0]
+            
+            listingID = soup[0]['data-pid']
+            
+            nameOfListing = soup[0].find('a',{"class":"hdrlnk"}).contents[0]
+            
+            priceOfListing = soup[0].find("span", {"class":"price"}).contents[0]
+            
+
+
+            #print("\nName Of listing: %s \nPrice Of the Listing: %s\nTime Of Listing: %s \nListing ID: %s "%(nameOfListing, priceOfListing, timeOfListing, listingID))#contents removes all the tags and attributes to give what they
+
+            listingObj = CraigslistPostObj(listingID,nameOfListing,priceOfListing,timeOfListing)
+
+            print(listingObj.__str__())
+            print(self.stack[0])
+
+
+            if(self.stack[0].__eq__( listingObj)):
+                print("they are the same")
+
+                
+            else:
+                print("they are NOT the same")
+            time.sleep(60)
+            
+            
+        
             
 
         
@@ -88,6 +126,7 @@ def main():
     notify = ["Dannyly199@gmail.com","danny19@uw.edu"]
     application = CraigslistBot(url1, notify)
     application.start()
+    application.run()
 
 if __name__ == "__main__":
     main()
