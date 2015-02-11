@@ -122,16 +122,18 @@ class CraigslistBot():
                                            timeOfListing,
                                            self.baseURL + listingLink)
 
-            print(listingObj.__str__())
-            print(self.stack[0])
+            print("This is the currenting check listing Object:" + listingObj.__str__())
+            print("\n")
+            print("THIS IS TE beginning of the stack" + self.stack[0].__str__())
+            print("\n")
+            
 
 
             if(self.stack[0].__eq__( listingObj)):
                 print("they are the same")
                 #emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],
                 #"We have a update\n" + listingObj.__str__())
-                emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"], "same posting" + listingObj.__str__())
-                
+                #emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"], "same posting" + listingObj.__str__())
                 
             else:
                 self.stack.append(listingObj)
@@ -146,11 +148,11 @@ class CraigslistBot():
 
         
 def main():
-    
+    url0 = "http://seattle.craigslist.org/search/sss?sort=rel&minAsk=10&maxAsk=15&query=monitor"
     url = "http://seattle.craigslist.org/search/sss?sort=rel&minAsk=5&maxAsk=12&query=monitor"
     url1 ="http://seattle.craigslist.org/search/sss?sort=rel&minAsk=10&maxAsk=900000&query=s2000"
     notify = ["Dannyly199@gmail.com","danny19@uw.edu"]
-    application = CraigslistBot(url, notify)
+    application = CraigslistBot(url0, notify)
     application.start()
     application.run()
     #application.test()
