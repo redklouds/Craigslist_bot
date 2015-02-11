@@ -8,13 +8,11 @@
 
 I left off at searching how to print a list of objects the pythonic way
 """
-from emailSender import EmailSender
+from emailsender import EmailSender
 from bs4 import BeautifulSoup
 import urllib.request, time
-from craiglistsPostObj import CraigslistPostObj
-
-
-from craigslistStack import CraigslistStack
+from craigslistpostobj import CraigslistPostObj
+from craigsliststack import CraigslistStack
 
 class CraigslistBot():
 
@@ -29,13 +27,14 @@ class CraigslistBot():
 
     def __init__(self,URL, notifyAddr, explicitKeywords = None):
         """URL: craigslist link including price parameters entered.
-           notifyAddr: Passed as an list if there are 2 or more recipiants, else accepts a string
-           explicitKeywords: if there are specific keywords to include in the title of the posting list them here as a list if two or more
-
-    
+           notifyAddr: Passed as an list if there are 2 or more /
+           recipiants, else accepts a stringexplicitKeywords: if /
+           there are specific keywords to include in the title of/
+           the posting list them here as a list if two or more
         """
         #####   Variables
         self.url = URL
+        self.baseURL = URL[:URL.find("org")+3]
         self.notifyAddr = notifyAddr
         self.explicitKeywords = explicitKeywords
 
@@ -44,7 +43,7 @@ class CraigslistBot():
         self.request = urllib.request.urlopen(self.url)
         
         self.DBListing = CraigslistStack()
-
+        
         self.stack = list()
     
     def start(self):
@@ -65,30 +64,47 @@ class CraigslistBot():
             timeOfListing = soup[posting].find("time").contents[0]
             
             listingID = soup[posting]['data-pid']
+
+
+            listingLink = soup[posting].find('a')["href"] # get all a href tags
+            #print(listingLink['href']) # from the list of hred get the value of 'href'
+
+
             
-            nameOfListing = soup[posting].find('a',{"class":"hdrlnk"}).contents[0]
+            nameOfListing = soup[posting].find('a',{"class":"hdrlnk"}).contents[0] #get title
             
             priceOfListing = soup[posting].find("span", {"class":"price"}).contents[0]
             
             #print("\nName Of listing: %s \nPrice Of the Listing: %s\nTime Of Listing: %s \nListing ID: %s "%(nameOfListing, priceOfListing, timeOfListing, listingID))#contents removes all the tags and attributes to give what they
-            listingObj = CraigslistPostObj(listingID,nameOfListing,priceOfListing,timeOfListing)
+            listingObj = CraigslistPostObj(nameOfListing,
+                                           listingID,
+                                           priceOfListing,
+                                           timeOfListing,
+                                           self.baseURL +listingLink)
 
             #self.DBListing.push(listingObj)
             self.stack.append(listingObj)
 
-            
+
+    def test(self):
+        return None
+        
     def run(self):
-        
-        request = urllib.request.urlopen(self.url)
-        
-        soupGetDom = BeautifulSoup(request.read())#reads from the URL and gets the document online into DOM
 
-        soup = soupGetDom('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
-
+        emailSender = EmailSender()
+        
+        
         while(True):
 
-            
+                    
+            request = urllib.request.urlopen(self.url)
+        
+            soupGetDom = BeautifulSoup(request.read())#reads from the URL and gets the document online into DOM
+
+            soup = soupGetDom('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
+
             timeOfListing = soup[0].find("time").contents[0]
+            listingLink = soup[0].find('a')["href"]
             
             listingID = soup[0]['data-pid']
             
@@ -100,7 +116,11 @@ class CraigslistBot():
 
             #print("\nName Of listing: %s \nPrice Of the Listing: %s\nTime Of Listing: %s \nListing ID: %s "%(nameOfListing, priceOfListing, timeOfListing, listingID))#contents removes all the tags and attributes to give what they
 
-            listingObj = CraigslistPostObj(listingID,nameOfListing,priceOfListing,timeOfListing)
+            listingObj = CraigslistPostObj(nameOfListing,
+                                           listingID,
+                                           priceOfListing,
+                                           timeOfListing,
+                                           self.baseURL + listingLink)
 
             print(listingObj.__str__())
             print(self.stack[0])
@@ -108,11 +128,17 @@ class CraigslistBot():
 
             if(self.stack[0].__eq__( listingObj)):
                 print("they are the same")
-
+                #emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],
+                #"We have a update\n" + listingObj.__str__())
+                emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"], "same posting" + listingObj.__str__())
+                
                 
             else:
+                self.stack.append(listingObj)
+                emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],
+                                        "We have a UPDATE\n" + listingObj.__str__())
                 print("they are NOT the same")
-            time.sleep(60)
+            time.sleep(120)
             
             
         
@@ -121,12 +147,13 @@ class CraigslistBot():
         
 def main():
     
-    url = "http://seattle.craigslist.org/search/sss?sort=pricedsc&minAsk=10&maxAsk=30&query=gay"
+    url = "http://seattle.craigslist.org/search/sss?sort=rel&minAsk=5&maxAsk=12&query=monitor"
     url1 ="http://seattle.craigslist.org/search/sss?sort=rel&minAsk=10&maxAsk=900000&query=s2000"
     notify = ["Dannyly199@gmail.com","danny19@uw.edu"]
-    application = CraigslistBot(url1, notify)
+    application = CraigslistBot(url, notify)
     application.start()
     application.run()
+    #application.test()
 
 if __name__ == "__main__":
     main()
