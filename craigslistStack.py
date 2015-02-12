@@ -17,14 +17,26 @@ class CraigslistStack(list):
     def __init__(self):
         super().__init__()
         
+    def append(self, toPush):
+        self.insert(0,toPush)
+
+    def peek(self):
+        return self[0]
+
+    def pop(self):
+        return self.remove(self[0])
 
 
-    def __str__(self):
-        for item in range(0,len(self)):
-            return str(self[item])
-        
+def main():
+    x = CraigslistStack()
+    x.append(5)
+    print(x)
+    x.append(7)
+    print(x)
+    print(x[0])
+    print("peek: " + str(x.peek()))
 
-    
+
+
 if __name__ == "__main__":
     main()
-        
