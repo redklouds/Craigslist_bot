@@ -43,72 +43,58 @@ class CraigslistBot():
 
         self.mailMan = EmailSender() #create the instance of EmailSender to send notifications to email
 
-        self.request = urllib.request.urlopen(self.url)
+        #self.request = urllib.request.urlopen(self.url)
         
-        self.DBListing = CraigslistStack()
+   
         
         #self.stack = list()
         self.stack = CraigslistStack()
+
+
+    def __buildCurrentListing(self):
+        """ Will build a stack with the current listed postings,
+        Creates a craiglist object, then appends them to the stack"""
+
+        request = urllib.request.urlopen(self.url)
+
+        bsObj = BeautifulSoup(request.read())
         
-    def start(self):
+        #searchTitle = bsObj.title.contents[0]
+
+        for listing in range(0, len(bsObj) -1):
+            
+            createObj = self.__buildListingObj(bsObj,listing)
+            self.stack.append(createObj)
+
+    def __buildListingObj(self, DOM, index = 0):
         
-        """Just using this function as a entry/starting point for program run """
-
-        soupGetDom = BeautifulSoup(self.request.read())#reads from the URL and gets the document online into DOM
-
-        soup = soupGetDom('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
-
-
-        searchKeyWord = soupGetDom.title.contents[0] # using BeautifulSoup find command to find the DOC title and gets its contents
-        ## Contents gets all the text that the tags are wrapping
-
-        print("key word for this Search: %s"%(searchKeyWord))
-        
-        for posting in range(0, len(soup)-1):
-
-
-            listingObj = self.getdata(soupGetDom, posting)
-
-            #self.DBListing.push(listingObj)
-            self.stack.append(listingObj)
-
-    def getdata(self, DOM, index = 0):
-        
-        """Testing this method to optimize the code """
+        """Testing this method to optimize the code
+        This method is reused whenever we need to parse the tags and create a listing Object from that imformation"""
 
 
     
         soup = DOM('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
 
-        timeOfListing = soup[index].find("time").contents[0]
-        print(timeOfListing)
-        listingLink = soup[index].find('a')["href"]
+        timeOfListing = soup[index].find("time").contents[0] #gets the date of the listing
+        listingLink = soup[index].find('a')["href"] #get's the href link address tot he listing
+     
+        listingID = soup[index]['data-pid'] #gets the postings ID this is used to identify if two post are identical or not.
         
-        listingID = soup[index]['data-pid']
+        nameOfListing = soup[index].find('a',{"class":"hdrlnk"}).contents[0] # gets the name of the listing
         
-        nameOfListing = soup[index].find('a',{"class":"hdrlnk"}).contents[0]
-        
-        priceOfListing = soup[index].find("span", {"class":"price"}).contents[0]
+        priceOfListing = soup[index].find("span", {"class":"price"}).contents[0] #get the price of the listing
         
 
         return CraigslistPostObj(nameOfListing,
                                        listingID,
                                        priceOfListing,
                                        timeOfListing,
-                                       self.baseURL + listingLink)
-
-
-
+                                       self.baseURL + listingLink) # returns an object of type CraigslistPostingObj
 
         
+    def start(self):
         
-
-        
-    def run(self):
-
-        emailSender = EmailSender()
-        
-        
+      
         while(True):
 
                     
@@ -117,7 +103,7 @@ class CraigslistBot():
             soupGetDom = BeautifulSoup(request.read())#reads from the URL and gets the document online into DOM
             
 
-            listingObj = self.getdata(soupGetDom)#testing!!!
+            listingObj = self.__buildListingObj(soupGetDom)#testing!!!
             
 
             print("This is the currenting check listing Object:"\
@@ -137,7 +123,7 @@ class CraigslistBot():
                 
             else:
                 self.stack.append(listingObj)
-                emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],
+                self.mailMan.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],
                                         "We have a UPDATE\n" + listingObj.__str__())
                 print("they are NOT the same")
             time.sleep(120)
@@ -149,9 +135,9 @@ class CraigslistBot():
         
 def main():
     url0 = "http://seattle.craigslist.org/search/sss?sort=rel&minAsk=10&maxAsk=15&query=monitor"
-    url = "http://seattle.craigslist.org/search/sss?sort=rel&minAsk=5&maxAsk=12&query=monitor"
-    url1 ="http://seattle.craigslist.org/search/sss?sort=rel&minAsk=10&maxAsk=900000&query=s2000"
+
     notify = ["Dannyly199@gmail.com","danny19@uw.edu"]
+    
     application = CraigslistBot(url0, notify)
     application.start()
     application.run()
@@ -160,57 +146,86 @@ def main():
 if __name__ == "__main__":
     main()
 
-            """
-            soup = soupGetDom('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
-
-            timeOfListing = soup[0].find("time").contents[0]
-            listingLink = soup[0].find('a')["href"]
-            
-            listingID = soup[0]['data-pid']
-            
-            nameOfListing = soup[0].find('a',{"class":"hdrlnk"}).contents[0]
-            
-            priceOfListing = soup[0].find("span", {"class":"price"}).contents[0]
-            
 
 
-            #print("\nName Of listing: %s \nPrice Of the Listing: %s\nTime Of Listing: %s \nListing ID: %s "%(nameOfListing, priceOfListing, timeOfListing, listingID))#contents removes all the tags and attributes to give what they
 
-            listingObj = CraigslistPostObj(nameOfListing,
-                                           listingID,
-                                           priceOfListing,
-                                           timeOfListing,
-                                           self.baseURL + listingLink)
-                                           """
+
+
     
-           
+"""    
+    def start(self):
+        
+        Just using this function as a entry/starting point for program run 
+
+        soupGetDom = BeautifulSoup(self.request.read())#reads from the URL and gets the document online into DOM
+
+        #soup = soupGetDom('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
 
 
-            """
-            timeOfListing = soup[posting].find("time").contents[0]
-            
-            listingID = soup[posting]['data-pid']
+        searchKeyWord = soupGetDom.title.contents[0] # using BeautifulSoup find command to find the DOC title and gets its contents
+        ## Contents gets all the text that the tags are wrapping
+
+        print("key word for this Search: %s"%(searchKeyWord))
+        
+        for posting in range(0, len(soup)-1):
 
 
-            listingLink = soup[posting].find('a')["href"] # get all a href tags
-            #print(listingLink['href']) # from the list of hred get the value of 'href'
+            listingObj = self.getdata(soupGetDom, posting)
+
+            #self.DBListing.push(listingObj)
+            self.stack.append(listingObj)
+"""
+"""
+soup = soupGetDom('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
+
+timeOfListing = soup[0].find("time").contents[0]
+listingLink = soup[0].find('a')["href"]
+
+listingID = soup[0]['data-pid']
+
+nameOfListing = soup[0].find('a',{"class":"hdrlnk"}).contents[0]
+
+priceOfListing = soup[0].find("span", {"class":"price"}).contents[0]
 
 
-            
-            nameOfListing = soup[posting].find('a',{"class":"hdrlnk"}).contents[0] #get title
-            
-            priceOfListing = soup[posting].find("span", {"class":"price"}).contents[0]
-            
+
+#print("\nName Of listing: %s \nPrice Of the Listing: %s\nTime Of Listing: %s \nListing ID: %s "%(nameOfListing, priceOfListing, timeOfListing, listingID))#contents removes all the tags and attributes to give what they
+
+listingObj = CraigslistPostObj(nameOfListing,
+                               listingID,
+                               priceOfListing,
+                               timeOfListing,
+                               self.baseURL + listingLink)
+                               """
 
 
-            #print("\nName Of listing: %s \nPrice Of the Listing: %s\nTime Of Listing: %s \nListing ID: %s "%(nameOfListing, priceOfListing, timeOfListing, listingID))#contents removes all the tags and attributes to give what they
 
-            listingObj = CraigslistPostObj(nameOfListing,
-                                           listingID,
-                                           priceOfListing,
-                                           timeOfListing,
-                                           self.baseURL +listingLink)
-            """
+
+"""
+timeOfListing = soup[posting].find("time").contents[0]
+
+listingID = soup[posting]['data-pid']
+
+
+listingLink = soup[posting].find('a')["href"] # get all a href tags
+#print(listingLink['href']) # from the list of hred get the value of 'href'
+
+
+
+nameOfListing = soup[posting].find('a',{"class":"hdrlnk"}).contents[0] #get title
+
+priceOfListing = soup[posting].find("span", {"class":"price"}).contents[0]
+
+
+
+#print("\nName Of listing: %s \nPrice Of the Listing: %s\nTime Of Listing: %s \nListing ID: %s "%(nameOfListing, priceOfListing, timeOfListing, listingID))#contents removes all the tags and attributes to give what they
+
+listingObj = CraigslistPostObj(nameOfListing,
+                               listingID,
+                               priceOfListing,
+                               timeOfListing,
+                               self.baseURL +listingLink)
+"""
 
             
 
