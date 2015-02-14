@@ -20,7 +20,9 @@ class CraigslistBot():
     NOTES: BUGS#######################
     1)when passing s url without giving price perameters, it will crash
 
-
+    2)Need to add a try and catch to catch python winError 10060, connection time out and reconnect if this happens
+    
+    
     NOTES: Still needs development################
     1)
     """
@@ -44,8 +46,8 @@ class CraigslistBot():
         
         self.DBListing = CraigslistStack()
         
-        self.stack = list()
-    
+        #self.stack = list()
+        self.stack = CraigslistStack()
     def start(self):
         """Just using this function as a entry/starting point for program run """
 
@@ -119,6 +121,10 @@ class CraigslistBot():
         
         
 
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 5f864b71782a36be0d43bc57df6626162a4ec54c
         
     def run(self):
 
@@ -168,7 +174,7 @@ class CraigslistBot():
             
 
 
-            if(self.stack[0].__eq__( listingObj)):
+            if(self.stack.peek().__eq__( listingObj)):
                 print("they are the same")
                 #emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],
                 #"We have a update\n" + listingObj.__str__())
