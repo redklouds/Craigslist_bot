@@ -60,7 +60,9 @@ class CraigslistBot():
         print("key word for this Search: %s"%(searchKeyWord))
         
         for posting in range(0, len(soup)-1):
-            
+
+
+            """
             timeOfListing = soup[posting].find("time").contents[0]
             
             listingID = soup[posting]['data-pid']
@@ -81,13 +83,42 @@ class CraigslistBot():
                                            priceOfListing,
                                            timeOfListing,
                                            self.baseURL +listingLink)
+                                           """
+
+            listingObj = getdata(BeautifulSoup(self.request.read()), posting)
 
             #self.DBListing.push(listingObj)
             self.stack.append(listingObj)
 
+    def getdata(self, DOM, index = 0):
+        """Testing this method to optimize the code """
 
-    def test(self):
-        return None
+
+        
+            soup = soupGetDom('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
+
+            timeOfListing = soup[index].find("time").contents[0]
+            listingLink = soup[index].find('a')["href"]
+            
+            listingID = soup[index]['data-pid']
+            
+            nameOfListing = soup[index].find('a',{"class":"hdrlnk"}).contents[0]
+            
+            priceOfListing = soup[index].find("span", {"class":"price"}).contents[0]
+            
+
+             return CraigslistPostObj(nameOfListing,
+                                           listingID,
+                                           priceOfListing,
+                                           timeOfListing,
+                                           self.baseURL + listingLink)
+
+
+
+
+        
+        
+
         
     def run(self):
 
@@ -100,7 +131,12 @@ class CraigslistBot():
             request = urllib.request.urlopen(self.url)
         
             soupGetDom = BeautifulSoup(request.read())#reads from the URL and gets the document online into DOM
+            
 
+            listingObj = getdata(soupGetDom)#testing!!!
+            
+
+            """
             soup = soupGetDom('p', {"class": "row"}) # finds p tags (paragraph) with attribute "class: row" attached to them
 
             timeOfListing = soup[0].find("time").contents[0]
@@ -121,10 +157,13 @@ class CraigslistBot():
                                            priceOfListing,
                                            timeOfListing,
                                            self.baseURL + listingLink)
-
-            print("This is the currenting check listing Object:" + listingObj.__str__())
+                                           """
+    
+            print("This is the currenting check listing Object:"\
+                  + listingObj.__str__())
             print("\n")
-            print("THIS IS TE beginning of the stack" + self.stack[0].__str__())
+            print("THIS IS TE beginning of the stack"\
+                  + self.stack[0].__str__())
             print("\n")
             
 
