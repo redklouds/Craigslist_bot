@@ -8,9 +8,9 @@
 
 I left off at searching how to print a list of objects the pythonic way
 """
+import urllib.request, time, random
 from emailsender import EmailSender
 from bs4 import BeautifulSoup
-import urllib.request, time
 from craigslistpostobj import CraigslistPostObj
 from craigsliststack import CraigslistStack
 
@@ -103,44 +103,51 @@ class CraigslistBot():
         
     def run(self):
         self.__buildInitalListing()
-        
+        sleepTime = 120
         
       
         while(True):
 
+            try:
+                request = urllib.request.urlopen(self.url)
+            
+                soupGetDom = BeautifulSoup(request.read())#reads from the URL and gets the document online into DOM
+                
+
+                listingObj = self.__buildListingObj(soupGetDom)#testing!!!
+                
+
+                print("This is the current listing being checked online:"\
+                      + listingObj.__str__())
+                print("\n")
+                print("THIS IS THE CURRENT ITEM AT THE BEGINNING OF THE STACK"\
+                      + self.stack[0].__str__())
+                print("\n")
+
+                                
+
+
+                if(self.stack.peek().__eq__( listingObj)):
+                    print("they are the same")
+                    #emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],
+                    #"We have a update\n" + listingObj.__str__())
+                    #emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"], "same posting" + listingObj.__str__())
                     
-            request = urllib.request.urlopen(self.url)
-        
-            soupGetDom = BeautifulSoup(request.read())#reads from the URL and gets the document online into DOM
-            
+                else:
+                    self.stack.append(listingObj)
+                    self.mailMan.sendMessage(
+                        ["dannyly199@gmail.com","danny19@uw.edu"],
+                        "We have a UPDATE\n" + listingObj.__str__())
+                    
+                    print("they are NOT the same")
 
-            listingObj = self.__buildListingObj(soupGetDom)#testing!!!
-            
+                    
+            except Exception as e:
+                print("\n\n\n   THERE WAS AN ERROR OR SOME TIMEOUT OCCURED")
+                sleepTime = random.randint(0,sleepTime) + sleepTime
 
-            print("This is the current listing being checked online:"\
-                  + listingObj.__str__())
-            print("\n")
-            print("THIS IS THE CURRENT ITEM AT THE BEGINNING OF THE STACK"\
-                  + self.stack[0].__str__())
-            print("\n")
-            
-
-
-            if(self.stack.peek().__eq__( listingObj)):
-                print("they are the same")
-                #emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],
-                #"We have a update\n" + listingObj.__str__())
-                #emailSender.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"], "same posting" + listingObj.__str__())
                 
-            else:
-                self.stack.append(listingObj)
-                self.mailMan.sendMessage(
-                    ["dannyly199@gmail.com","danny19@uw.edu"],
-                    "We have a UPDATE\n" + listingObj.__str__())
-                
-                print("they are NOT the same")
-                
-            time.sleep(120)
+            time.sleep(sleepTime)
             
             
         
