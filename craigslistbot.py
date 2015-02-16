@@ -19,6 +19,8 @@ class CraigslistBot():
     """
     NOTES: BUGS#######################
     ***********BUG DOES NOT CORRECTLY ADD THE FIRST LISTING IN IT. 
+#Note to self, need to make sure i change the collections tructure to using a QUeue instead of a stack,
+#the stack does not allow me to know the first item added**** self notes****
 
     
     1)when passing s url without giving price perameters, it will crash
