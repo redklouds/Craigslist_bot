@@ -27,16 +27,10 @@ class CraigslistStack(list):
         return self.remove(self[0])
 
 
-def main():
-    x = CraigslistStack()
-    x.append(5)
-    print(x)
-    x.append(7)
-    print(x)
-    print(x[0])
-    print("peek: " + str(x.peek()))
+#def main():
 
 
 
-if __name__ == "__main__":
-    main()
+
+#if __name__ == "__main__":
+   # main()
