@@ -12,13 +12,13 @@ class CraigslistStack(list):
     """This will by my self defined stack class, i did not like the built in to much
     bleh more fun and practice"""
 
-    
+   
 
     def __init__(self):
         super().__init__()
         
     def append(self, toPush):
-        self.insert(0,toPush)
+        self.insert(len(self),toPush)
 
     def peek(self):
         return self[0]
