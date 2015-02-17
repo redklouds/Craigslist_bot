@@ -105,7 +105,7 @@ class CraigslistBot():
         
     def run(self):
         self.__buildInitalListing()
-        sleepTime = 160
+        sleepTime = 260
         
       
         while(True):
