@@ -149,9 +149,12 @@ class CraigslistBot():
             except Exception as e:
                 print("\n\n\n   THERE WAS AN ERROR OR SOME TIMEOUT OCCURED")
                 sleepTime = random.randint(0,sleepTime) + sleepTime
-
                 self.mailMan.sendMessage(["dannyly199@gmail.com"],"WE have encountered a problem")
+
+
+
             time.sleep(sleepTime)
+            
             
             
             self.mailMan.sendMessage(
