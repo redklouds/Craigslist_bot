@@ -58,10 +58,6 @@ notification"""
         
     
 def main():
-    test = EmailSender()
-    print("poassed 1")
-    test.sendMessage(["dannyly199@gmail.com","danny19@uw.edu"],"HEY fuck face")
-
 
 if __name__ == "__main__":
     #python special variables, if the file is run then main's MAIN name variable will call THIS mains
